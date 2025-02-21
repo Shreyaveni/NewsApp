@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Plus Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/">
+                    <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="NewsPulse Logo">
+                </a>
+            </div>
+            
+            <div class="brand-name">News Plus</div>
+            <ul>
+                <li><a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('business') }}" class="{% if active_page == 'business' %}active{% endif %}">Business</a></li>
+                <li><a href="{{ url_for('technology') }}" class="{% if active_page == 'technology' %}active{% endif %}">Technology</a></li>
+                <li><a href="{{ url_for('sports') }}" class="{% if active_page == 'sports' %}active{% endif %}">Sports</a></li>
+                <li><a href="{{ url_for('politics') }}" class="{% if active_page == 'politics' %}active{% endif %}">Politics & Social</a></li>
+                <li><a href="{{ url_for('entertainment') }}" class="{% if active_page == 'entertainment' %}active{% endif %}">Entertainment</a></li>
+                <li><a href="{{ url_for('world') }}" class="{% if active_page == 'world' %}active{% endif %}">World</a></li>
+            </ul>
+            <form action="{{ url_for('home') }}" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Search news..." value="{{ request.args.get('q', '') }}">
+                <button type="submit">🔍</button>
+            </form>
+            
+        </nav>
+    </header>
+
+    <main>
+        {% if articles %}
+            <div id="news-container">
+                {% for article in articles %}
+                <article class="news-item {% if loop.index > 16 %}hidden{% endif %}">
+                    {% if article.urlToImage %}
+                        <img src="{{ article.urlToImage }}" alt="News Image">
+                    {% endif %}
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.description }}</p>
+                    <a href="{{ article.url }}" target="_blank">Read more</a>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Show More and Show Less Buttons -->
+            <div class="buttons-container">
+                <button id="show-more-btn" class="show-btn">Show More</button>
+                <button id="show-less-btn" class="show-btn" style="display: none;">Show Less</button>
+            </div>
+            {% else %}
+            <p class="message">No articles available.</p>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>About Us | Contact | Privacy Policy | Terms of Service</p>
+        <p>Follow us: Facebook | Twitter | Instagram | LinkedIn | YouTube</p>
+        <p>© 2025 News Plus - All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const showMoreBtn = document.getElementById("show-more-btn");
+            const showLessBtn = document.getElementById("show-less-btn");
+            const allArticles = document.querySelectorAll(".news-item");
+
+            let articlesToShow = 16; // Default articles count
+            let isExpanded = false; // Track expansion state
+
+            function updateVisibility() {
+                allArticles.forEach((article, index) => {
+                    article.style.display = index < articlesToShow ? "block" : "none";
+                });
+
+                // Show "Show More" only when there are hidden articles
+                if (!isExpanded && allArticles.length > 16) {
+                    showMoreBtn.style.display = "block";
+                    showLessBtn.style.display = "none";
+                } else {
+                    showMoreBtn.style.display = "none";
+                    showLessBtn.style.display = "block";
+                }
+            }
+
+            showMoreBtn.addEventListener("click", function () {
+                articlesToShow = allArticles.length; // Show all articles
+                isExpanded = true;
+                updateVisibility();
+
+                // Scroll to bottom after showing all articles
+                // setTimeout(() => {
+                //     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                // }, 300);
+            });
+
+            showLessBtn.addEventListener("click", function () {
+                articlesToShow = 16; // Collapse back to 16 articles
+                isExpanded = false;
+                updateVisibility();
+
+                // Scroll back to top after collapsing
+                //setTimeout(() => {
+                //    window.scrollTo({ top: 0, behavior: "smooth" });
+                //}, 300);
+            });
+
+            updateVisibility(); // Initial setup
+        });
+    </script>
+    
+</body>
+</html>
