@@ -5,8 +5,8 @@ from flasgger import Swagger
 app = Flask(__name__)
 swagger = Swagger(app)  
 
-API_KEY = "d6189249502c4d9eb5e1bad9d3408116"
-BASE_URL = "https://newsapi.org/v2/everything"
+API_KEY = "You_api_key"
+BASE_URL = "  "
 
 def get_news(query):
   
